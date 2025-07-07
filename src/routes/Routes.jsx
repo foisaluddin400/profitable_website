@@ -130,7 +130,7 @@ export const router = createBrowserRouter([
         path: '/FaqInvestors',
         element: <FaqInvestors></FaqInvestors>,
       },
-
+//d
       // {
       //   path: "/notification",
       //   path: '/faqs',
