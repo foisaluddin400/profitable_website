@@ -25,8 +25,7 @@ import BusinessDetails from '../Pages/BusinessDirectoryPage/BusinessDetails';
 import MyBusiness from '../Pages/mybusiness/MyBusiness';
 import MyBusinessDetails from '../Pages/mybusiness/MyBusinessDetails';
 import InterestedBuyer from '../Pages/mybusiness/InterestedBuyer';
-// // import InterestBuyerDetails from '../Pages/mybusiness/interestBuyerDetails';
-// import InterestBuyerDetails from '../Pages/mybusiness/InterestBuyerDetails';
+
 import AddNewBusiness from '../Pages/mybusiness/AddNewBusiness';
 import EditProfile from '../Pages/ProfilePage/EditProfile';
 import AboutUs from '../Pages/AboutUs/AboutUs';
@@ -54,7 +53,8 @@ import Seller from '../Pages/seller/Seller';
 import ChooseRole from '../Auth/ChooseRole';
 import EditNewBusiness from '../Pages/mybusiness/EditNewBusiness';
 import SignUp from '../Auth/SignUp';
-import InterestBuyerDetails from '../Pages/mybusiness/interestBuyerDetails';
+import InterestBuyerDetailss from '../Pages/mybusiness/InterestBuyerDetailss';
+// import InterestBuyerDetails from '../Pages/mybusiness/InterestBuyerDetailss';
 
 export const router = createBrowserRouter([
   {
@@ -154,7 +154,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/interestBuyer/details',
-        element: <InterestBuyerDetails></InterestBuyerDetails>
+        element: <InterestBuyerDetailss></InterestBuyerDetailss>
       },
       {
         path: '/details',
