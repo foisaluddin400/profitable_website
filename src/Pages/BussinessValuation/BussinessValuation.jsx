@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Upload,
   User,
@@ -32,7 +32,52 @@ export default function BusinessValuationForm() {
     message: "",
     consentEmail: false,
     consentTerms: false,
+    files: {
+      plReport: null,
+      equipmentList: null,
+      businessProfile: null,
+      businessImages: null
+    },
+    fileErrors: {}
   });
+
+  const MAX_FILE_SIZE = 9 * 1024 * 1024; // 9MB in bytes
+  const ALLOWED_FILE_TYPES = ['application/pdf'];
+
+  const validateFile = (file) => {
+    if (!file) return { valid: true };
+    
+    const errors = [];
+    
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      errors.push('Only PDF files are allowed');
+    }
+    
+    if (file.size > MAX_FILE_SIZE) {
+      errors.push('File size must be less than 9MB');
+    }
+    
+    return {
+      valid: errors.length === 0,
+      errors: errors.join(', ')
+    };
+  };
+
+  const handleFileChange = (field, file) => {
+    const validation = validateFile(file);
+    
+    setFormData(prev => ({
+      ...prev,
+      files: {
+        ...prev.files,
+        [field]: file
+      },
+      fileErrors: {
+        ...prev.fileErrors,
+        [field]: validation.valid ? null : validation.errors
+      }
+    }));
+  };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -46,29 +91,69 @@ export default function BusinessValuationForm() {
     console.log("Form submitted:", formData);
   };
 
-  const SectionHeader = ({ icon: Icon, title }) => (
-    <div className="flex items-center gap-2 mb-6">
-      <Icon className="h-5 w-5 text-green-500" />
-      <h3 className="text-lg font-semibold text-blue-600">{title}</h3>
-    </div>
-  );
+  const FileUploadArea = ({ label, field, file, error }) => {
+    const fileInputRef = React.useRef(null);
+    const id = `file-upload-${field}`;
+    
+    const handleButtonClick = () => {
+      fileInputRef.current?.click();
+    };
 
-  const FileUploadArea = ({ label }) => (
-    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-      <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-      <p className="text-sm text-gray-600 mb-2">Upload File</p>
-      <input type="file" accept=".pdf" className="hidden" />
-      <button className="text-gray-600 border border-gray-300 px-4 py-2 rounded-md bg-transparent hover:bg-gray-100">
-        Choose File
-      </button>
-    </div>
-  );
+    const handleChange = (e) => {
+      const selectedFile = e.target.files[0];
+      handleFileChange(field, selectedFile);
+    };
+
+    return (
+      <div className="space-y-2">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
+          <Upload className="h-6 w-6 text-gray-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600 mb-2">
+            {file ? 'Change File' : 'Upload File (PDF - Max 9MB)'}
+          </p>
+          <input
+            id={id}
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf"
+            className="hidden"
+            onChange={handleChange}
+          />
+          <button
+            type="button"
+            onClick={handleButtonClick}
+            className="text-gray-600 border border-gray-300 px-4 py-2 rounded-md bg-transparent hover:bg-gray-100 text-sm"
+          >
+            {file ? file.name : 'Choose File'}
+          </button>
+          {file && (
+            <div className="mt-2 flex items-center justify-center text-xs text-gray-500">
+              <span>{(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleFileChange(field, null);
+                }}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
+                Remove
+              </button>
+            </div>
+          )}
+        </div>
+        {error && (
+          <p className="text-red-500 text-xs mt-1">{error}</p>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="container mx-auto p-5">
+    <div className="container mx-auto px-5 pt-20 pb-10">
       {/* Header */}
-      <div className="relative flex flex-col items-start gap-5 pl-5 mb-5">
-        <div className="absolute top-0 left-0 w-2 h-full bg-[#00FF3A] z-[1] rounded-r-full"></div>
+      <div className="relative flex flex-col items-start gap-5 pl-5 mb-10">
+        <div className="absolute top-0 left-0 w-2 h-full bg-[#22C55E] z-[1] rounded-r-full"></div>
 
         <div className="ml-5">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0091FF] mb-6 leading-tight">
@@ -422,25 +507,45 @@ export default function BusinessValuationForm() {
                 <label className="block text-sm font-medium text-gray-700">
                   P&L Report (1 Year Minimum)
                 </label>
-                <FileUploadArea label="P&L Report" />
+                <FileUploadArea 
+                  label="P&L Report" 
+                  field="plReport"
+                  file={formData.files.plReport}
+                  error={formData.fileErrors.plReport}
+                />
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Equipment List
                 </label>
-                <FileUploadArea label="Equipment List" />
+                <FileUploadArea 
+                  label="Equipment List" 
+                  field="equipmentList"
+                  file={formData.files.equipmentList}
+                  error={formData.fileErrors.equipmentList}
+                />
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Business Profile
                 </label>
-                <FileUploadArea label="Business Profile" />
+                <FileUploadArea 
+                  label="Business Profile" 
+                  field="businessProfile"
+                  file={formData.files.businessProfile}
+                  error={formData.fileErrors.businessProfile}
+                />
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Business Images (Combined PDF)
                 </label>
-                <FileUploadArea label="Business Images" />
+                <FileUploadArea 
+                  label="Business Images" 
+                  field="businessImages"
+                  file={formData.files.businessImages}
+                  error={formData.fileErrors.businessImages}
+                />
               </div>
             </div>
           </div>
