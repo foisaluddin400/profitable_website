@@ -219,7 +219,7 @@ export const router = createBrowserRouter([
         path: '/business-valuaion',
         element: <BusinessValuationForm />,
       },
-       {
+      {
         path: '/business-schedule',
         element: <SchedualeCall></SchedualeCall>
       },
