@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'https://profitable-backend-sparktech-6.onrender.com',
+    baseUrl: 'https://profitable-backend-sparktech-6.onrender.com/api/v1',
     // http://159.65.217.35:8001
     prepareHeaders: (headers) => {
         const token = (localStorage.getItem('accessToken'));
